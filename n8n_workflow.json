@@ -1,0 +1,173 @@
+{
+  "name": "Autonomous MLOps Orchestration Platform",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "retrain-ml-model",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d71aa290-30c6-47a9-9172-15e2d899df10",
+      "name": "Webhook",
+      "webhookId": "ea8118c3-fa17-4605-a33f-32788b77491b"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://unshowering-unfueled-deborah.ngrok-free.dev/train",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"max_retries\": 3,\n  \"quality_threshold\": 6\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "601aff8e-90e9-40f3-9026-0dbe06da43da",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "17281aac-0853-4667-bfa1-668e9975420b",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "accepted",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "46ba7183-1c6f-4671-b4a9-5550f8505941",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://unshowering-unfueled-deborah.ngrok-free.dev/promote",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "version",
+              "value": "={{ $json.recommended_version }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "9a560585-73cd-4b6b-b330-08e5c572fd2a",
+      "name": "Promote_Model_To_Production"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://unshowering-unfueled-deborah.ngrok-free.dev/rollback",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        624,
+        96
+      ],
+      "id": "5e21de6f-f497-4aae-a752-25c8b5edd47d",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Promote_Model_To_Production",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d741492b-fc3e-4fb8-8c03-9580c04d8383",
+  "meta": {
+    "instanceId": "0623c8f41efec2fa191ab1cd4ba97b33256d41dc555a340bf4ea33e70e4b5545"
+  },
+  "id": "mgGNJU3p2bVt81yv",
+  "tags": []
+}
