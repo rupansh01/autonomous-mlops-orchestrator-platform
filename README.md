@@ -31,3 +31,9 @@ Webhook → n8n → Training API → Evaluation → MLflow Tracking → Model Pr
 ## Use Case
 Applicable to systems where models need frequent retraining, such as
 recommendation systems, forecasting pipelines, or analytics platforms.
+
+## 👨‍💻 **AUTHOR**
+
+**Rupansh Kumar**
+M.Tech CSE — AI Platform and Workflow Automation Engineer 
+Focused on building **production‑safe, governable AI systems**
